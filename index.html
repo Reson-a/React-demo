@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>react-demo</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script src="script/react.min.js"></script>
+  <script src="script/react-dom.min.js"></script>
+  <script src="script/browser.min.js"></script>
+  <script type="text/babel">
+  var TodoList = React.createClass({    
+    render: function() {
+      var createItem = function(itemText,index) {
+        return <li style={{overflow:'hidden'}}><span style={{float:'left',width:'160px',overflow:'hidden',whiteSpace:'no-wrap',textOverflow:'ellipsis'}}>{itemText}</span>
+          <button style={{float:'right',height:'2em'}} onClick={this.props.removeItem.bind(this,index)}>delete</button>
+          </li>
+      }
+      return <ul style={{listStyleType:'none',width:'100%',padding:'0'}}>{this.props.items.map(createItem.bind(this))}</ul>
+    }
+  })
+
+  var TodoApp = React.createClass({
+    getInitialState: function() {
+      return {items:[], text:''}
+    },
+    onChange: function(e) {
+      this.setState({text:e.target.value})
+    }, 
+    removeItem: function (index, e) {
+      var nextItems = [].concat(this.state.items)
+      nextItems.splice(index,1)
+      this.setState({items:nextItems})
+    },
+    handleSubmit: function(e) {
+      e.preventDefault()
+      if(this.state.text!==''){
+        var nextItems = this.state.items.concat([this.state.text])
+        var nextText = ''
+        this.setState({items:nextItems, text:nextText})
+      }      
+    },
+    render: function() {
+      return (
+        <div style={{width:'250px'}}>
+          <h3>TODO</h3>          
+          <form onSubmit={this.handleSubmit}>
+            <input onChange={this.onChange} value={this.state.text} />
+            <button>{'Add #' + (this.state.items.length + 1)}</button>
+          </form>
+          <TodoList ref="todoList" items={this.state.items} removeItem={this.removeItem}></TodoList>          
+        </div>
+      )
+    },
+    componentDidMount: function() {
+      console.log(this.refs)
+    }
+  }) 
+
+  ReactDOM.render(<TodoApp />, document.getElementById('app'))
+  </script>
+</body>
+
+</html>
